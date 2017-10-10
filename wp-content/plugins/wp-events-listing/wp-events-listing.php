@@ -78,9 +78,10 @@ class WPEventsListing {
 			$date = get_post_meta( $post->ID, '_event_date', true );
 
 			if ( !empty( $date ) ) {
+				$url = esc_url( get_post_meta( $post->ID, '_event_url', true ) );
 				$content .= sprintf( '<div>Event Date: %s</div>', $date );
 				$content .= sprintf( '<div>Event Location: %s</div>', get_post_meta( $post->ID, '_event_location', true ) );
-				$content .= sprintf( '<div>Event URL: %s</div>', esc_url( get_post_meta( $post->ID, '_event_url', true ) ) );
+				$content .= sprintf( '<div>Event URL: <a href="%s" target="_blank">%s</a></div>', $url,$url );
 				$content .= sprintf( '<div><a href="http://www.google.com/calendar/event?
 action=TEMPLATE
 &text=%s
