@@ -23,6 +23,8 @@ class WPEventsListing {
 	function __construct() {
 
 		add_action( 'init', array( $this, 'init_functions' ) );
+		add_filter( 'the_content', array( $this, 'event_post_content' ) );
+
 
 		new WPE_Metabox();
 	}
@@ -67,6 +69,29 @@ class WPEventsListing {
 		);
 
 		register_post_type( 'event', $args );
+	}
+
+	function event_post_content( $content ) {
+		global $post;
+
+		if ( $post->post_type == 'event' ) {
+			$date = get_post_meta( $post->ID, '_event_date', true );
+
+			if ( !empty( $date ) ) {
+				$content .= sprintf( '<div>Event Date: %s</div>', $date );
+				$content .= sprintf( '<div>Event Location: %s</div>', get_post_meta( $post->ID, '_event_location', true ) );
+				$content .= sprintf( '<div>Event URL: %s</div>', esc_url( get_post_meta( $post->ID, '_event_url', true ) ) );
+				$content .= sprintf( '<div><a href="http://www.google.com/calendar/event?
+action=TEMPLATE
+&text=%s
+&dates=%s
+&location=%s
+&details"
+target="_blank" rel="nofollow">Add to my calendar</a>', urlencode( $post->post_title ), urlencode( mysql2date( 'Ymd', $date ) . '/' . mysql2date( 'Ymd', $date ) ), urlencode( get_post_meta( $post->ID
+										, '_event_location', true ) ) );
+			}
+		}
+		return $content;
 	}
 
 }
